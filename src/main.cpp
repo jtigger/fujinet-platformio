@@ -204,16 +204,25 @@ void cbm_setup()
 // Main high-priority service loop
 void fn_service_loop(void *param)
 {
+    bool c = DIGI_LOW;
     while (true)
     {
         // We don't have any delays in this loop, so IDLE threads will be starved
         // Shouldn't be a problem, but something to keep in mind...
         // Go service BT if it's active
-    #ifdef BLUETOOTH_SUPPORT
+#ifdef BLUETOOTH_SUPPORT
         if (fnBtManager.isActive())
             fnBtManager.service();
         else
-    #endif
+#endif
+
+            //     fnSystem.set_pin_mode(22, gpio_mode_t::GPIO_MODE_OUTPUT);
+            // for (int i = 0; i < 100; i++)
+            // {
+            //     fnSystem.digital_write(22, c);
+            //     fnSystem.delay_microseconds(100);
+            //     c = not c;
+            // }
 
             // THIS IS WHERE WE CAN SELECT THE HOST MACHINE
             //    SIO.service();
@@ -228,6 +237,18 @@ extern "C"
 {
     void app_main()
     {
+        bool c = DIGI_LOW;
+        fnSystem.set_pin_mode(22, gpio_mode_t::GPIO_MODE_OUTPUT);
+        fnSystem.digital_write(22, DIGI_LOW);
+        fnSystem.digital_write(22, DIGI_HIGH);
+        fnSystem.digital_write(22, DIGI_LOW);
+        for (int i = 0; i < 100; i++)
+        {
+            fnSystem.digital_write(22, c);
+            fnSystem.delay_microseconds(10);
+            c = not c;
+        }
+
         // Call our setup routine
         cbm_setup();
         
