@@ -9,7 +9,6 @@
 #include "bus.h"
 #include "../modem-sniffer/modem-sniffer.h"
 #include "libtelnet.h"
-#include "esp32sshclient.h"
 
 /* Keep strings under 40 characters, for the benefit of 40-column users! */
 #define HELPL01 "       FujiNet Virtual Modem 850"
