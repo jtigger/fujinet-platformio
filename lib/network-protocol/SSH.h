@@ -7,7 +7,6 @@
 
 #include <string>
 #include "Protocol.h"
-//#include "../libssh2/utility/libssh2/libssh2.h"
 #include "../tcpip/fnTcpClient.h"
 #include "lwip/sockets.h"
 
