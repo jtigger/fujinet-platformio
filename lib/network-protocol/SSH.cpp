@@ -37,12 +37,12 @@ bool NetworkProtocolSSH::open(EdUrlParser *urlParser, cmdFrame_t *cmdFrame)
         urlParser->port = 22;
     }
 
-    if ((ret = libssh2_init(0)) != 0)
-    {
-        Debug_printf("NetworkProtocolSSH::open() - libssh2_init not successful. Value returned: %d\n", ret);
-        error = NETWORK_ERROR_GENERAL;
-        return true;
-    }
+    // if ((ret = libssh2_init(0)) != 0)
+    // {
+    //     Debug_printf("NetworkProtocolSSH::open() - libssh2_init not successful. Value returned: %d\n", ret);
+    //     error = NETWORK_ERROR_GENERAL;
+    //     return true;
+    // }
 
     if (client.connect(urlParser->hostName.c_str(), atoi(urlParser->port.c_str())) == 0)
     {
@@ -51,70 +51,70 @@ bool NetworkProtocolSSH::open(EdUrlParser *urlParser, cmdFrame_t *cmdFrame)
         return true;
     }
 
-    Debug_printf("NetworkProtocolSSH::open() - Opening session.\n");
-    session = libssh2_session_init();
-    if (session == nullptr)
-    {
-        Debug_printf("Could not create session. aborting.\n");
-        error = NETWORK_ERROR_NOT_CONNECTED;
-        return true;
-    }
+    // Debug_printf("NetworkProtocolSSH::open() - Opening session.\n");
+    // session = libssh2_session_init();
+    // if (session == nullptr)
+    // {
+    //     Debug_printf("Could not create session. aborting.\n");
+    //     error = NETWORK_ERROR_NOT_CONNECTED;
+    //     return true;
+    // }
 
-    Debug_printf("NetworkProtocolSSH::open() - Attempting session handshake with fd %u\n", client.fd());
-    if (libssh2_session_handshake(session, client.fd()))
-    {
-        error = NETWORK_ERROR_NOT_CONNECTED;
-        Debug_printf("NetworkProtocolSSH::open() - Could not perform SSH handshake.\n");
-        return true;
-    }
+    // Debug_printf("NetworkProtocolSSH::open() - Attempting session handshake with fd %u\n", client.fd());
+    // if (libssh2_session_handshake(session, client.fd()))
+    // {
+    //     error = NETWORK_ERROR_NOT_CONNECTED;
+    //     Debug_printf("NetworkProtocolSSH::open() - Could not perform SSH handshake.\n");
+    //     return true;
+    // }
 
-    fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    // fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
 
-    Debug_printf("SSH Host Key Fingerprint is: ");
+    // Debug_printf("SSH Host Key Fingerprint is: ");
 
-    for (int i = 0; i < 20; i++)
-    {
-        Debug_printf("%02X", (unsigned char)fingerprint[i]);
-        if (i < 19)
-            Debug_printf(":");
-    }
+    // for (int i = 0; i < 20; i++)
+    // {
+    //     Debug_printf("%02X", (unsigned char)fingerprint[i]);
+    //     if (i < 19)
+    //         Debug_printf(":");
+    // }
 
-    Debug_printf("\n");
+    // Debug_printf("\n");
 
-    userauthlist = libssh2_userauth_list(session, login->c_str(), login->length());
-     Debug_printf("Authentication methods: %s\n", userauthlist);
+    // userauthlist = libssh2_userauth_list(session, login->c_str(), login->length());
+    // Debug_printf("Authentication methods: %s\n", userauthlist);
 
-    if (libssh2_userauth_password(session, login->c_str(), password->c_str()))
-    {
-        error = NETWORK_ERROR_GENERAL;
-        Debug_printf("Could not perform userauth.\n");
-        return true;
-    }
+    // if (libssh2_userauth_password(session, login->c_str(), password->c_str()))
+    // {
+    //     error = NETWORK_ERROR_GENERAL;
+    //     Debug_printf("Could not perform userauth.\n");
+    //     return true;
+    // }
 
-    channel = libssh2_channel_open_session(session);
+    // channel = libssh2_channel_open_session(session);
 
-    if (!channel)
-    {
-        error = NETWORK_ERROR_GENERAL;
-        Debug_printf("Could not open session channel.\n");
-        return true;
-    }
+    // if (!channel)
+    // {
+    //     error = NETWORK_ERROR_GENERAL;
+    //     Debug_printf("Could not open session channel.\n");
+    //     return true;
+    // }
 
-    if (libssh2_channel_request_pty(channel, "vanilla"))
-    {
-        error = NETWORK_ERROR_GENERAL;
-        Debug_printf("Could not request pty\n");
-        return true;
-    }
+    // if (libssh2_channel_request_pty(channel, "vanilla"))
+    // {
+    //     error = NETWORK_ERROR_GENERAL;
+    //     Debug_printf("Could not request pty\n");
+    //     return true;
+    // }
 
-    if (libssh2_channel_shell(channel))
-    {
-        error = NETWORK_ERROR_GENERAL;
-        Debug_printf("Could not open shell on channel\n");
-        return true;
-    }
+    // if (libssh2_channel_shell(channel))
+    // {
+    //     error = NETWORK_ERROR_GENERAL;
+    //     Debug_printf("Could not open shell on channel\n");
+    //     return true;
+    // }
 
-    libssh2_channel_set_blocking(channel, 0);
+    // libssh2_channel_set_blocking(channel, 0);
 
     // At this point, we should be able to talk to the shell.
     Debug_printf("Shell opened.\n");
@@ -124,9 +124,9 @@ bool NetworkProtocolSSH::open(EdUrlParser *urlParser, cmdFrame_t *cmdFrame)
 
 bool NetworkProtocolSSH::close()
 {
-    libssh2_session_disconnect(session, "Closed by NetworkProtocolSSH::close()");
-    libssh2_session_free(session);
-    libssh2_exit();
+    // libssh2_session_disconnect(session, "Closed by NetworkProtocolSSH::close()");
+    // libssh2_session_free(session);
+    // libssh2_exit();
     return false;
 }
 
@@ -141,7 +141,7 @@ bool NetworkProtocolSSH::write(unsigned short len)
     bool err = false;
 
     len = translate_transmit_buffer();
-    libssh2_channel_write(channel, transmitBuffer->data(), len);
+    // libssh2_channel_write(channel, transmitBuffer->data(), len);
 
     // Return success
     error = 1;
@@ -153,8 +153,8 @@ bool NetworkProtocolSSH::write(unsigned short len)
 bool NetworkProtocolSSH::status(NetworkStatus *status)
 {
     status->rxBytesWaiting = available();    
-    status->connected = libssh2_channel_eof(channel) == 0 ? 1 : 0;
-    status->error = libssh2_channel_eof(channel) == 0 ? 1 : NETWORK_ERROR_END_OF_FILE;
+    // status->connected = libssh2_channel_eof(channel) == 0 ? 1 : 0;
+    // status->error = libssh2_channel_eof(channel) == 0 ? 1 : NETWORK_ERROR_END_OF_FILE;
     NetworkProtocol::status(status);
     return false;
 }
@@ -183,15 +183,15 @@ unsigned short NetworkProtocolSSH::available()
 {
     if (receiveBuffer->length() == 0)
     {
-        if (libssh2_channel_eof(channel) == 0)
-        {
-            int len = libssh2_channel_read(channel, rxbuf, RXBUF_SIZE);
-            if (len != LIBSSH2_ERROR_EAGAIN)
-            {
-                receiveBuffer->append(rxbuf, len);
-                translate_receive_buffer();
-            }
-        }
+        // if (libssh2_channel_eof(channel) == 0)
+        // {
+        //     int len = libssh2_channel_read(channel, rxbuf, RXBUF_SIZE);
+        //     if (len != LIBSSH2_ERROR_EAGAIN)
+        //     {
+        //         receiveBuffer->append(rxbuf, len);
+        //         translate_receive_buffer();
+        //     }
+        // }
     }
 
     return receiveBuffer->length();
