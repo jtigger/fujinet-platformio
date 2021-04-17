@@ -51,6 +51,15 @@ bool NetworkProtocolSSH::open(EdUrlParser *urlParser, cmdFrame_t *cmdFrame)
         return true;
     }
 
+    session = ssh_new();
+
+    if (session == NULL)
+    {
+        Debug_printf("Could not create libssh session. Aborting.");
+        error = NETWORK_ERROR_NOT_CONNECTED;
+        return true;
+    }
+
     // Debug_printf("NetworkProtocolSSH::open() - Opening session.\n");
     // session = libssh2_session_init();
     // if (session == nullptr)
@@ -127,6 +136,7 @@ bool NetworkProtocolSSH::close()
     // libssh2_session_disconnect(session, "Closed by NetworkProtocolSSH::close()");
     // libssh2_session_free(session);
     // libssh2_exit();
+    ssh_free(session);
     return false;
 }
 
