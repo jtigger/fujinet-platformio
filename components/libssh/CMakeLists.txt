@@ -13,6 +13,7 @@ set(srcs
   ${SRC}/config.c
   ${SRC}/connect.c
   ${SRC}/connector.c
+  ${SRC}/crypto_common.c
   ${SRC}/curve25519.c
   ${SRC}/dh.c
   ${SRC}/dh-gex.c
